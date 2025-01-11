@@ -1,0 +1,65 @@
+﻿@if (TempData["SessionExpired"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["SessionExpired"]
+    </div>
+}
+
+@{
+	ViewBag.Title = "Login Page";
+}
+
+<div class="row justify-content-center w-80">
+	<div class="col-12 col-md-5">
+		<div class="card shadow p-5">
+			<h2 class="text-center mb-4">Login</h2>
+			<form asp-action="Login" method="post">
+				<div class="mb-3">
+					<label class="form-label">Username</label>
+					<input type="text" name="username" class="form-control" placeholder="Enter your username">
+                    
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Password</label>
+					<input name="password" type="password" class="form-control" placeholder="Enter your password">
+				</div>
+                <span class="text-danger">@TempData["InvalidCredentials"]</span>
+				<div class="d-grid mt-4">
+					<button type="submit" class="btn btn-primary">Login</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @TempData["SuccessMessage"]
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <text>
+                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+        </text>
+    }
+    });
+</script>
+

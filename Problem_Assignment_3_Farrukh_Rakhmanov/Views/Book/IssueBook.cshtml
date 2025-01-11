@@ -1,0 +1,49 @@
+﻿@model MemberBook
+@{
+    ViewBag.Title = "Issue Book";
+}
+
+<h2>Issue Book</h2>
+
+<div class="container" style="display: flex;">
+    <form asp-action="IssueBook" method="post">
+        <div class="col">
+            <div class="row" style="margin-bottom: 15px;">
+                <label asp-for="Id" class="form-label">Members</label>
+                <select asp-for="Id" class="form-select">
+                    <option value="">Select a member</option>
+                    @foreach (var member in ViewBag.Members)
+                    {
+                        <option value="@member.Id">@member.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="row" style="margin-bottom: 15px;">
+                <label asp-for="BookId" class="form-label">Available Books</label>
+                <select asp-for="BookId" class="form-select">
+                    <option value="">Select a book</option>
+                    @if (Model != null)
+                    {
+                        @foreach (var book in ViewBag.Books)
+                        {
+                            <option value="@book.BookId">@book.Title</option>
+                        }
+                    }
+                </select>
+                <br />
+                @if (@TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-warning">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+            </div>
+        </div>
+        <input type="hidden" asp-for="Id">
+        <input type="submit" value="Save" class="btn btn-primary" style="margin-top: 15px;">
+        <a asp-action="Index" class="btn btn-secondary" style="margin-top: 15px;">Cancel</a>
+    </form>
+</div>

@@ -1,0 +1,240 @@
+﻿@model User
+
+@{
+	ViewBag.Title = "Profile Page";
+}
+
+<div class="container">
+	<a type="button" asp-action="Index" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-secondary">Back to Home page</a>
+	<hr />
+
+	<!-- Profile Sidebar -->
+
+	<div class="row">
+
+
+		<div class="col-md-4">
+			<div class="card shadow">
+				<div class="card-body text-center">
+					@if (Model.ProfilePicture == null)
+					{
+						<img src="https://via.placeholder.com/150" alt="Default Profile Picture"
+							 class="rounded-circle mb-3" style="width: 150px; height: 150px;" />
+					}
+					else
+					{
+						<img src="@Url.Action("Display", "Home", new { id = Model.ProfilePicture.Id })"
+							 alt="Profile Picture"
+							 class="rounded-circle mb-3" style="width: 150px; height: 150px;" />
+						<form id="deleteForm" asp-action="DeleteImage" asp-controller="Home" method="post">
+							<input type="hidden" asp-for="Id">
+							<button type="button" id="deleteButton" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
+						</form>
+					}
+
+					<h3 class="card-title mt-3">@Model.Name</h3>
+
+					<form id="uploadForm" asp-action="Upload" asp-controller="Home" method="post"
+						  enctype="multipart/form-data" onsubmit="return validateForm()" class="px-3">
+						<input type="hidden" asp-for="ProfilePicture.Name" class="form-control"
+							   value="@Model.Name" name="name" />
+						<input type="file" id="imageFile" name="imageFile" class="form-control" />
+						<input type="hidden" asp-for="Id">
+						<br />
+						<button type="submit" class="btn btn-primary">Upload</button>
+					</form>
+				</div>
+			</div>
+
+
+			<!-- Change Password Section -->
+			<div class="card shadow mt-4">
+				<div class="card-body">
+					<h4 class="card-title">Change Password</h4>
+					<a type="button" asp-action="UpdatePassword" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-primary">Change password</a>
+
+				</div>
+			</div>
+		</div>
+
+		<!-- Profile Form -->
+		<div class="col-md-8">
+			<div class="card shadow">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center">
+						<h4 class="card-title mb-0">Profile Details</h4>
+						<button class="btn btn-secondary" type="button" id="editButton">
+							<i class="fa-solid fa-pen"></i>
+						</button>
+					</div>
+					<hr>
+					<form asp-action="Profile" method="post" id="profileForm">
+						<div class="form-group row mb-3">
+							<label asp-for="Name" class="col-sm-4 col-form-label">Name</label>
+							<div class="col-sm-8">
+								<input type="text" asp-for="Name" class="form-control" disabled>
+								<span asp-validation-for="Name" class="text-danger"></span>
+							</div>
+						</div>
+
+						<div class="form-group row mb-3">
+							<label asp-for="DateOfBirth" class="col-sm-4 col-form-label">Date of Birth</label>
+							<div class="col-sm-8">
+								<input type="date" asp-for="DateOfBirth" class="form-control" disabled>
+								<span asp-validation-for="DateOfBirth" class="text-danger"></span>
+							</div>
+						</div>
+
+						<div class="form-group row mb-3">
+							<label asp-for="Age" class="col-sm-4 col-form-label">Age</label>
+							<div class="col-sm-8">
+								<input id="age" type="number" asp-for="Age" class="form-control" disabled>
+								<span asp-validation-for="Age" class="text-danger"></span>
+							</div>
+						</div>
+						<div class="form-group row mb-3">
+							<label asp-for="Username" class="col-sm-4 col-form-label">Username</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control" asp-for="Username" disabled>
+								<span asp-validation-for="Username" class="text-danger"></span>
+							</div>
+						</div>
+
+						<!-- Save and Cancel Buttons -->
+						<div class="form-group row">
+							<div class="col-sm-8 offset-sm-4">
+								<input type="hidden" asp-for="Role" class="form-control" value="Member">
+								<input type="hidden" class="form-control" asp-for="Password" value="@Model.Password">
+								<input type="hidden" class="form-control" asp-for="ConfirmPassword" value="@Model.ConfirmPassword">
+								<input type="hidden" class="form-control" asp-for="ProfilePicture" value="@Model.ProfilePicture">
+								<input type="hidden" class="form-control" asp-for="Id">
+								<input type="submit" class="btn btn-success" value="Save Changes" disabled id="saveButton">
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="successModalLabel">Success</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				@TempData["SuccessMessage"]
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for Missing Image -->
+<div class="modal fade" id="missingImageModal" tabindex="-1" aria-labelledby="missingImageModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="missingImageModalLabel">Error</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Please select an image file to upload.
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal for Image Deletion -->
+<div class="modal fade" id="imageDeletionModal" tabindex="-1" aria-labelledby="imageDeletionModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="imageDeletionModalLabel">Warning</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Are you sure you want to delete the profile picture?
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="submitDeletion" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		// Check if there's a success message in TempData
+	@if (TempData["SuccessMessage"] != null)
+	{
+		<text>
+						var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+						successModal.show();
+		</text>
+	}
+	});
+
+	 function validateForm() {
+		var imageFile = document.getElementById("imageFile").value;
+		if (imageFile === "") {
+			// Show the modal if no file is selected
+			var missingImageModal = new bootstrap.Modal(document.getElementById('missingImageModal'));
+			missingImageModal.show();
+			return false; // Prevent form submission
+		}
+		return true; // Allow form submission
+	}
+
+	function imageDeletion() {
+		var imageFile = document.getElementById("imageFile").value;
+
+	}
+
+	document.addEventListener("DOMContentLoaded", function () {
+		const deleteButton = document.getElementById("deleteButton");
+		const submitDeletion = document.getElementById("submitDeletion");
+		const deleteForm = document.getElementById("deleteForm");
+
+		// Show the modal when the delete button is clicked
+		deleteButton.addEventListener("click", function () {
+			const modal = new bootstrap.Modal(document.getElementById("imageDeletionModal"));
+			modal.show();
+		});
+
+		// Submit the form when the delete confirmation button is clicked
+		submitDeletion.addEventListener("click", function () {
+			deleteForm.submit();
+		});
+	});
+
+	document.addEventListener("DOMContentLoaded", function () {
+		const editButton = document.getElementById("editButton");
+		const formInputs = document.querySelectorAll("#profileForm input:not([type='hidden'])");
+		const saveButton = document.getElementById("saveButton");
+
+		// Initially disable input fields and save button
+			formInputs.forEach(input => input.disabled = true);
+
+		saveButton.disabled = true;
+
+		// Enable input fields and save button on clicking the edit button
+		editButton.addEventListener("click", function () {
+			formInputs.forEach(input => input.disabled = false);
+			saveButton.disabled = false;
+		});
+	});
+
+</script>
+
+

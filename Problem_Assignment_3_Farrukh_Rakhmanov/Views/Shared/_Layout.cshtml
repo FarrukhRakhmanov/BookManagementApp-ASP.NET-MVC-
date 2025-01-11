@@ -1,0 +1,110 @@
+﻿@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+
+    <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <script src="~/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <!-- Header with Navbar -->
+    <header class="bg-primary text-white py-2">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <!-- Site Logo/Name -->
+            <div class="d-flex align-items-center mb-2 mb-md-0">
+                <a class="nav-link text-white" asp-controller="Home" asp-action="Index"><i class="fas fa-book-open me-2"></i></a>
+                <span class="fs-4">Book Management System</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav>
+                <ul class="nav flex-column flex-md-row">
+                    @if(HttpContextAccessor?.HttpContext?.Session?.GetString("Username") == null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Login&nbsp;<i class="fa-solid fa-right-to-bracket"></i></a>
+                        </li>
+                    }
+                    else
+                    {
+                        @if(HttpContextAccessor?.HttpContext?.Session?.GetString("Role") == "Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Member" asp-action="Index">Members</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Member" asp-action="AddMember">Add Member</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Book" asp-action="AdminIndex">Books</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Book" asp-action="AddBook">Add Book</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Book" asp-action="IssueBook">Issue Books</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Book" asp-action="ReturnBook">Return Books</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Home" asp-route-id="@HttpContextAccessor?.HttpContext?.Session?.GetInt32("UserId")" asp-action="Profile">
+                                    <i class="fa-solid fa-user"></i>
+                                </a>
+                            </li>
+                        }
+                        else if (HttpContextAccessor?.HttpContext?.Session?.GetString("Role") == "Member")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Member" asp-route-id="@HttpContextAccessor?.HttpContext?.Session?.GetInt32("UserId")" asp-action="IssueBook">
+                                    Issue Book
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Member" asp-action="ReturnBook">
+                                    Return Book
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Book" asp-action="MemberIndex">Books</a>
+                            </li>                            
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Member" asp-route-id="@HttpContextAccessor?.HttpContext?.Session?.GetInt32("UserId")" asp-action="Profile">
+                                    <i class="fa-solid fa-user"></i>
+                                </a>
+                            </li>
+                        }
+                        
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-controller="Account" asp-action="Logout">Logout&nbsp;<i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <br />
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-3">
+        <div class="container text-center">
+            <p class="mb-0">&copy; Farrukh Rakhmanov, 8950315</p>
+        </div>
+    </footer>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

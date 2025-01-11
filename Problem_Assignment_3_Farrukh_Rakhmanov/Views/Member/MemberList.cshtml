@@ -1,0 +1,78 @@
+﻿@model SearchViewModel
+
+@{
+	ViewBag.Title = "Members";
+}
+
+<br />
+<div class="container-fluid">
+	<div class="row">
+		<!-- Sidebar for Filters and Sorting -->
+		<aside class="col-md-2 col-lg-2">
+			<h4>Filters</h4>
+
+			<!-- Search Form -->
+			<form method="get" asp-action="Index">
+				<div class="form-group">
+					<label for="searchTerm">Search</label>
+					<input type="text" id="searchTerm" name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search for members..." />
+				</div>
+				<br />
+				<!-- Sort Options -->
+				<h5>Filter By</h5>
+				<div class="list-group mb-3">
+					<a asp-action="Index" asp-route-filterBy="" class="list-group-item list-group-item-action @(string.IsNullOrEmpty(Model.FilterBy)? "active" : "")">All</a>
+					<a asp-action="Index" asp-route-filterBy="hasIssuedBook" class="list-group-item list-group-item-action @(Model.FilterBy == "hasIssuedBook" ? "active" : "")">Has Issued Book</a>
+					<a asp-action="Index" asp-route-filterBy="noIssuedBook" class="list-group-item list-group-item-action @(Model.FilterBy == "noIssuedBook" ? "active" : "")">No Issued Book</a>
+				</div>
+
+				<button type="submit" class="btn btn-primary">Apply Filters</button>
+				<br />
+				<br />
+			</form>
+		</aside>
+
+		<!-- Main Content Area for Book Results -->
+		<main class="col-md-8 col-lg-10">
+			<h2>Member List</h2>
+			@if (Model.Members.Count == 0)
+			{
+				<p>No members found.</p>
+			}
+			else
+			{
+				<div class="justify-content-center">
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead class="table-header">
+								<tr>
+									<th><a asp-action="Index" asp-route-sortBy="@(Model.SortBy == "name" ? "name_desc" : "name")">Name</a></th>
+									<th><a asp-action="Index" asp-route-sortBy="@(Model.SortBy == "phone" ? "phone_desc" : "phone")">Phone</a></th>
+									<th><a asp-action="Index" asp-route-sortBy="@(Model.SortBy == "email" ? "email_desc" : "email")">Email</a></th>
+									<th><a asp-action="Index" asp-route-sortBy="@(Model.SortBy == "books" ? "books_desc" : "books")">Issued Books Qty</a></th>
+									<th>Actions</th>
+								</tr>
+							<tbody>
+									@foreach (var member in Model.Members)
+									{
+									<tr>
+										<td>@member.Name</td>
+										<td>@member.PhoneNumber</td>
+										<td>@member.Email</td>										
+										<td>@member.MemberBooks.Count()</td>										
+										<td>
+											<a asp-action="EditMember" asp-controller="Member" class="btn btn-secondary" asp-route-id="@member.Id"><i class="fa-solid fa-pen-to-square" style="color: deepskyblue;"></i></a>
+											<a asp-action="DeleteMember" class="btn btn-danger" asp-route-id="@member.Id"><i class="fa-solid fa-trash"></i></a>
+										</td>
+									</tr>
+									}
+							</tbody>
+
+						</table>
+					</div>
+				</div>
+			}
+		</main>
+	</div>
+</div>
+

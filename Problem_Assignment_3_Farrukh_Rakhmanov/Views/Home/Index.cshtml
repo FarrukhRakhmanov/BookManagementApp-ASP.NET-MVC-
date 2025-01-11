@@ -1,0 +1,100 @@
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@{
+	ViewBag.Title = TempData["Title"];
+}
+<div class="row justify-content-center">
+	<div class="col-md-8 text-center">
+		@if (HttpContextAccessor.HttpContext.Session.GetString("Username") != null)
+		{
+
+			@if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "Admin")
+			{
+				<div class="container mt-5 text-center">
+					<h1 class="display-4">Admin Panel</h1>
+					<p class="mt-4">Welcome to the Book Management System @HttpContextAccessor.HttpContext.Session.GetString("Username")! </p>
+
+					<div class="row mt-5">
+
+
+						<div class="col-md-4 mb-4">
+							<a asp-controller="Book" asp-action="AddBook" class="btn btn-primary btn-lg w-100">
+								<i class="fa-solid fa-plus"></i> Add Book
+							</a>
+							<p class="mt-2">Add new books.</p>
+						</div>
+
+						<div class="col-md-4 mb-4">
+							<a asp-controller="Member" asp-action="AddMember" class="btn btn-success btn-lg w-100">
+								<i class="fa-solid fa-user"></i>&nbsp;Add Member
+							</a>
+							<p class="mt-2">Register new members.</p>
+						</div>
+
+						<div class="col-md-4 mb-4">
+							<a asp-controller="Book" style="background-color:deepskyblue" asp-action="IssueBook" class="btn btn-lg w-100">
+								<i class="fa-solid fa-cart-plus"></i> Issue Book
+							</a>
+							<p class="mt-2">Issue a book.</p>
+						</div>
+						<div class="col-md-4 mb-4">
+							<a asp-action="AdminIndex" , asp-controller="Book" class="btn btn-secondary btn-lg w-100">
+								<i class="fa-solid fa-layer-group"></i> Book List
+							</a>
+							<p class="mt-2">Browse book collection.</p>
+						</div>
+						<div class="col-md-4 mb-4">
+							<a href="/member/Index" class="btn btn-info btn-lg w-100">
+								<i class="fa-solid fa-users"></i> Member List
+							</a>
+							<p class="mt-2">View registered members.</p>
+						</div>
+						<div class="col-md-4 mb-4">
+							<a asp-controller="Book" style="background-color:#FDD365" asp-action="ReturnBook" class="btn btn-lg w-100">
+								<i class="fa-solid fa-right-left"></i> Return Book
+							</a>
+							<p class="mt-2">Issue a book.</p>
+						</div>
+					</div>
+				</div>
+			}
+			else if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "Member")
+			{
+				<div class="container mt-5 text-center">
+					<h1 class="display-4">Book Management System</h1>
+					<p class="lead">Manage your library with ease</p>
+					<p>Welcome back @HttpContextAccessor.HttpContext.Session.GetString("Username")</p>
+					<div class="row mt-5">
+
+						<div class="col-md-4 mb-4">
+							<a asp-controller="Member" style="background-color:#FDD365" asp-action="ReturnBook" class="btn btn-lg w-100">
+								<i class="fa-solid fa-layer-group"></i> My Issued Books
+							</a>
+							<p class="mt-2">View my issued books.</p>
+						</div>
+						<div class="col-md-4 mb-4">
+							<a asp-controller="Member" style="background-color:deepskyblue" asp-route-id="@HttpContextAccessor?.HttpContext?.Session?.GetInt32("UserId")"
+							   asp-action="IssueBook" class="btn btn-lg w-100">
+								<i class="fa-solid fa-cart-plus"></i> Issue Book
+							</a>
+							<p class="mt-2">Issue a new book.</p>
+						</div>
+						<div class="col-md-4 mb-4">
+							<a asp-action="MemberIndex" , asp-controller="Book" class="btn btn-secondary btn-lg w-100">
+								<i class="fa-solid fa-layer-group"></i> Book List
+							</a>
+							<p class="mt-2">Browse the library's book collection.</p>
+						</div>
+					</div>
+				</div>
+			}
+		}
+		else
+		{
+			<div class="alert alert-warning">
+				@TempData["SessionExpired"]
+			</div>
+		}
+	</div>
+</div>
+
+

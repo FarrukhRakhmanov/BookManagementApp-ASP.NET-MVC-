@@ -1,0 +1,119 @@
+﻿@model Member
+@{
+    ViewBag.Title = "Add/Edit Member";
+}
+
+<h2>Add/Edit Member</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-controller="Member" asp-action="EditMember" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input type="text" asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Username" class="form-label">Username</label>
+                        <input type="text" asp-for="Username" class="form-control" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="DateOfBirth" class="form-label">Date Of Birth</label>
+                        <input type="date" asp-for="DateOfBirth" class="form-control" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Age" class="form-label">Age</label>
+                        <input type="text" asp-for="Age" class="form-control" />
+                        <span asp-validation-for="Age" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input type="text" asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input type="text" asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input type="password" asp-for="Password" value="@Model.Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" asp-for="ConfirmPassword" value="@Model.ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Role" class="form-label">Role</label>
+                    <input type="text" asp-for="Role" class="form-control" />
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <input type="hidden" asp-for="MemberBooks" class="form-control" />
+                    <input type="hidden" asp-for="Id" />
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Member Issued Books Table -->
+        <div class="col-md-6">
+            @if (Model.MemberBooks?.Count > 0 && Model.MemberBooks != null)
+            {
+                <h3>Issued Books</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Author</th>
+                            <th>Title</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var book in Model.MemberBooks)
+                        {
+                            <tr>
+                                <td>@book.Book.Author</td>
+                                <td>@book.Book.Title</td>
+                                <td>
+                                    <form asp-controller="Book" asp-action="ReturnBook" method="post" style="display:inline;">
+                                        <input type="hidden" name="MemberId" value="@Model.Id" />
+                                        <input type="hidden" name="BookId" value="@book.Book.BookId" />
+                                        <button type="submit" class="btn btn-warning">Return</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                @if (Model.Id != 0)
+                {
+                    <h3>No issued books...</h3>
+                    <a asp-action="IssueBook" asp-controller="Book" class="btn btn-primary">Issue Book</a>
+                }
+                else
+                {
+                    <p>Place for issued books</p>
+                }               
+            }
+        </div>
+    </div>
+</div>

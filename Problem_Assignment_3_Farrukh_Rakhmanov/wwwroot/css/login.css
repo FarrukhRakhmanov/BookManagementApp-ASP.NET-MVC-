@@ -1,0 +1,14 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa; /* Light background for contrast */
+}
+
+main {
+    width: 50%; /* 50% width of the page */
+    max-width: 400px; /* Ensures the form doesn't get too wide on large screens */
+    padding: 1rem;
+}

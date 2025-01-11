@@ -1,0 +1,42 @@
+﻿@model MemberBook
+@{
+	ViewBag.Title = "Issue Book";
+}
+
+<h2>Issue Book</h2>
+
+<div class="container" style="display: flex;">
+	@if(ViewBag.Books != null && ViewBag.Books.Count > 0)
+	{
+		<form asp-action="IssueBook" method="post">
+			<div class="col">
+				<div class="row" style="margin-bottom: 15px;">
+					<label class="form-label">Member</label>
+					<select class="form-select">
+						<option>@Model.Member.Name</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="col">
+				<div class="row" style="margin-bottom: 15px;">
+					<label asp-for="BookId" class="form-label">Available Books</label>
+					<select asp-for="BookId" class="form-select">
+						<option value="">Select a book</option>
+						@foreach (var book in ViewBag.Books)
+						{
+							<option value="@book.BookId">@book.Title</option>
+						}
+					</select>
+				</div>
+			</div>
+			<input type="hidden" asp-for="Id">
+			<input type="submit" value="Save" class="btn btn-primary" style="margin-top: 15px;">
+			<a asp-action="Index" asp-controller="Home" class="btn btn-secondary" style="margin-top: 15px;">Cancel</a>
+		</form>
+	}
+	else
+	{
+		<p>No books to issue, you have issued all available books</p>
+	}
+</div>

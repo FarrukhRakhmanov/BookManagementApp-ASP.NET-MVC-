@@ -1,0 +1,71 @@
+﻿@model Member
+@{
+	ViewBag.Title = "My Issued Books";
+}
+<div class="container">
+
+	<div class="justify-content-center">
+		@if (Model.MemberBooks?.Count > 0 && Model.MemberBooks != null)
+		{
+			<h2>Issued Book List</h2>
+			<div>
+				<table class="table table-bordered">
+					<tr>
+						<th>Book Title</th>
+						<th>Author</th>
+						<th>Actions</th>
+					</tr>
+					<tbody>
+
+						@foreach (var entry in Model.MemberBooks)
+						{
+							<tr>
+								<td>@entry.Book.Title</td>
+								<td>@entry.Book.Author</td>
+								<td>
+									<form id="returnBookForm" asp-controller="Member" asp-action="ReturnBook" method="post" style="display:inline;">
+										<input type="hidden" name="MemberId" asp-for="@entry.Member.Id" />
+										<input type="hidden" name="BookId" asp-for="@entry.Book.BookId" />
+										<button type="button" style="background-color:#FDD365" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#bookReturnModal">Return</button>
+									</form>
+								</td>
+							</tr>
+						}
+
+					</tbody>
+				</table>
+			</div>
+		}
+		else
+		{
+			<h3>No issued books...</h3>
+			<a asp-action="Index" asp-controller="Book" class="btn btn-primary">Issue Book</a>
+		}
+
+	</div>
+
+
+	<!-- Delete Confirmation Modal -->
+	<div class="modal fade" id="bookReturnModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="confirmReturnButtonLabel">Confirm Deletion</h5>
+				</div>
+				<div class="modal-body">
+					Are you sure you want to return the book?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-danger" id="confirmReturnButton">Confirm</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+<script>
+	document.getElementById("confirmReturnButton").addEventListener("click", function () {
+		document.getElementById("returnBookForm").submit();
+	});
+</script>

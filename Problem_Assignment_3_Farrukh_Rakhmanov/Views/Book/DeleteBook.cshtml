@@ -1,0 +1,34 @@
+﻿@model Book
+@{
+	ViewBag.Title = "Delete Book";
+
+}
+@if(ViewBag.Members.Count == 0)
+{
+	<h3>Are you sure you want to delete @Model.Title?</h3>
+
+	<div class="container">
+		<div class="justify-content-center">
+			<div class="col-md-6">
+				<form asp-controller="Book" asp-action="DeleteBook" method="post">
+					<div class="mb-3">
+						<label asp-for="Title" class="form-label">Title</label>
+						<input type="text" asp-for="Title" class="form-control" disabled />
+					</div>
+					<p>@TempData["message"]</p>
+					<input type="hidden" asp-for="BookId" />
+					<input type="submit" value="Delete" class="btn btn-danger" />
+					<a asp-action="AdminIndex" class="btn btn-secondary">Cancel</a>
+				</form>
+			</div>
+		</div>
+	</div>
+}
+else
+{
+	<h3 style="color: red;">You cannot delete this book, a member has a copy of it</h3>
+	<a asp-action="AdminIndex" class="btn btn-secondary">Back to book list</a>
+	<a asp-action="ReturnBook" class="btn btn-primary">Return the book</a>
+}
+
+

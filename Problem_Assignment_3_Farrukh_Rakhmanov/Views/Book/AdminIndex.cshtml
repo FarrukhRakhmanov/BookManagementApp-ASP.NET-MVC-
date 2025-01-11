@@ -1,0 +1,128 @@
+﻿@model SearchViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+	ViewBag.Title = "Books";
+}
+<br />
+<div class="container-fluid">
+	<div class="row">
+
+		@if (HttpContextAccessor.HttpContext.Session.GetString("Username") != null)
+		{
+			<!-- Sidebar for Filters and Sorting -->
+			<aside class="col-md-2 col-lg-2">
+				<h4>Filters</h4>
+
+				<!-- Search Form -->
+				<form method="get" asp-action="Index">
+					<div class="form-group">
+						<label for="searchTerm">Search</label>
+						<input type="text" id="searchTerm" name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search for books..." />
+					</div>
+					<!-- Filter by Genre -->
+					<h5>Genre</h5>
+					<div class="list-group mb-3">
+						<a asp-action="AdminIndex" asp-route-genre="" class="list-group-item list-group-item-action @(string.IsNullOrEmpty(Model.SelectedGenre) ? "active" : "")">All Genres</a>
+						@foreach (var genre in Model.Genres)
+						{
+							<a asp-action="AdminIndex" asp-route-genre="@genre" class="list-group-item list-group-item-action @(genre == Model.SelectedGenre ? "active" : "")">
+								@genre
+							</a>
+						}
+					</div>
+
+					<!-- Sort Options -->
+					<h5>Filter By</h5>
+					<div class="list-group mb-3">
+						<a asp-action="AdminIndex" asp-route-filterBy="" class="list-group-item list-group-item-action @(string.IsNullOrEmpty(Model.FilterBy)? "active" : "")">All</a>
+						<a asp-action="AdminIndex" asp-route-filterBy="isAvailable" class="list-group-item list-group-item-action @(Model.FilterBy == "isAvailable" ? "active" : "")">Is Available</a>
+						<a asp-action="AdminIndex" asp-route-filterBy="notAvailable" class="list-group-item list-group-item-action @(Model.FilterBy == "notAvailable" ? "active" : "")">Not Available</a>
+					</div>
+
+					<button type="submit" class="btn btn-primary">Apply Filters</button>
+					<br />
+					<br />
+				</form>
+			</aside>
+
+			<!-- Main Content Area for Book Results -->
+			<main class="col-md-8 col-lg-10">
+				<h2>Book List</h2>
+				@if (Model.Books.Count == 0)
+				{
+					<p>No books found.</p>
+				}
+				else
+				{
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead class="table-header">
+								<tr>
+									<th><a asp-action="AdminIndex" asp-route-sortBy="@(Model.SortBy == "title" ? "title_desc" : "title")">Title</a></th>
+									<th><a asp-action="AdminIndex" asp-route-sortBy="@(Model.SortBy == "author" ? "author_desc" : "author")">Author</a></th>
+									<th><a asp-action="AdminIndex" asp-route-sortBy="@(Model.SortBy == "year" ? "year_desc" : "year")">Year</a></th>
+									<th><a asp-action="AdminIndex" asp-route-sortBy="@(Model.SortBy == "genre" ? "genre_desc" : "genre")">Genre</a></th>
+									<th><a asp-action="AdminIndex" asp-route-sortBy="@(Model.SortBy == "quantity" ? "quantity_desc" : "quantity")">Quantity</a></th>
+									<th><a asp-action="AdminIndex" asp-route-sortBy="@(Model.SortBy == "availableQuantity" ? "availableQuantity_desc" : "availableQuantity")">Available Quantity</a></th>
+									<th><a asp-action="AdminIndex" asp-route-sortBy="@(Model.SortBy == "isAvailable" ? "isAvailable_desc" : "isAvailable")">Is Available</a></th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var book in Model.Books)
+								{
+									<tr>
+										<td>@book.Title</td>
+										<td>@book.Author</td>
+										<td>@book.Year</td>
+										<td>@book.Genre?.Name</td>
+
+										@if (HttpContextAccessor?.HttpContext?.Session?.GetString("Role") == "Admin")
+										{
+											<td>@book.Quantity</td>
+											<td>@book.AvailableQuantity</td>
+											@if (book.IsAvailable)
+											{
+												<td style="color:green;">Yes</td>
+											}
+											else
+											{
+												<td style="color:red;">No</td>
+											}
+											<td>
+												<span><a asp-action="EditBook" class="btn btn-secondary" asp-route-id="@book.BookId"><i class="fa-solid fa-pen-to-square" style="color: deepskyblue;"></i></a></span>
+												<span><a asp-action="DeleteBook" class="btn btn-danger" asp-route-id="@book.BookId"><i class="fa-solid fa-trash"></i></a></span>
+											</td>
+										}
+										else if (HttpContextAccessor?.HttpContext?.Session?.GetString("Role") == "Member")
+										{
+											@if (book.IsAvailable)
+											{
+												<td style="color:green;">Yes</td>
+												<td><a asp-controller="Member" asp-action="IssueBook" class="btn btn-secondary" asp-route-id="@HttpContextAccessor?.HttpContext?.Session?.GetInt32("UserId")"><i class="fa-solid fa-cart-plus"></i></a></td>
+											}
+											else
+											{
+												<td style="color:red;">No</td>
+												<td><span>No available for issuance</span></td>
+											}
+										}
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</main>
+
+		}
+		else
+		{
+			<div class="alert alert-warning">
+				<span>Log-in to view books and issue</span>
+			</div>
+		}
+
+	</div>
+</div>
+

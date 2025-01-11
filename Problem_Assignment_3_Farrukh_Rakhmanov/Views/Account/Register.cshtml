@@ -1,0 +1,88 @@
+﻿@model User
+
+@{
+    ViewBag.Title = "Register Page";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-md-6 form-container">
+            <div class="card shadow p-4">
+                <h2 class="text-center mb-4">Register</h2>
+                <form asp-action="Register" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input type="text" asp-for="Name" class="form-control" placeholder="Enter your name">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                        <input type="date" asp-for="DateOfBirth" class="form-control" placeholder="Enter your date of birth" id="dobInput">
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Age" class="form-label">Age</label>
+                        <input type="text" asp-for="Age" class="form-control" placeholder="Your age will be calculated automatically" id="ageInput" readonly>
+                        <span asp-validation-for="Age" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label">Username</label>
+                        <input type="text" asp-for="Username" class="form-control" placeholder="Enter your username">
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input type="password" asp-for="Password" class="form-control" placeholder="Create a password">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" asp-for="ConfirmPassword" class="form-control" placeholder="Re-enter password">
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="imageFile" class="form-label">Profile Picture</label>
+                        <input type="file" name="imageFile" class="form-control" />
+                        <input type="hidden" asp-for="ProfilePicture.Name" value="@Model.Name" name="imageFile" class="form-control" />
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="small mb-0">Already have an account? <a asp-action="Login" class="text-primary">Login</a></p>
+                    </div>
+                    <div class="d-grid mt-4">
+                        <input type="hidden" asp-for="Role" class="form-control" value="Member">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dobInput = document.getElementById("dobInput");
+        const ageInput = document.getElementById("ageInput");
+
+        dobInput.addEventListener("change", function () {
+            const dob = new Date(dobInput.value);
+            const today = new Date();
+
+            if (dob && dob <= today) {
+
+                let age = today.getFullYear() - dob.getFullYear();
+                const monthDiff = today.getMonth() - dob.getMonth();
+                const dayDiff = today.getDate() - dob.getDate();
+
+                if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                    age--;
+                }
+
+                ageInput.value = age;
+            } else {
+                ageInput.value = ""; 
+            }
+        });
+    });
+</script>
